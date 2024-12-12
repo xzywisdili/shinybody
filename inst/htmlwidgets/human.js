@@ -1,28 +1,43 @@
 HTMLWidgets.widget({
+  name: "human",
 
-  name: 'human',
+  type: "output",
 
-  type: 'output',
-
-  factory: function(el, width, height) {
-
-    // TODO: define shared variables for this instance
-
+  factory: function (el) {
     return {
-
-      renderValue: function(x) {
-
-        // TODO: code to render the widget, e.g.
+      renderValue: function (x) {
         el.innerHTML = x.svg_text;
+        el.style.border = "1px solid #ccc";
+        el.style.display = "inline-block";
+        el.style.verticalAlign = "top";
 
+        x.shown.forEach(function (id_to_show) {
+          const shownPart = el.querySelector(`#${id_to_show}`);
+          if (shownPart) {
+            shownPart.style.fill = "black";
+            shownPart.style.stroke = "black";
+          }
+        });
+
+        x.highlighted.forEach(function (id_to_highlight) {
+          const highlightPart = el.querySelector(`#${id_to_highlight}`);
+          if (highlightPart) {
+            highlightPart.style.fill = "yellow";
+            highlightPart.style.stroke = "yellow";
+          }
+        });
+
+        x.selected.forEach(function (id_to_select) {
+          const selectedPart = el.querySelector(`#${id_to_select}`);
+          if (selectedPart) {
+            selectedPart.setAttribute('data-selected', 'true');
+          }
+        });
       },
 
-      resize: function(width, height) {
-
+      resize: function (width, height) {
         // TODO: code to re-render the widget with a new size
-
-      }
-
+      },
     };
-  }
+  },
 });
