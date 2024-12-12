@@ -29,8 +29,8 @@ HTMLWidgets.widget({
 
             if (organObject.selected) {
               shownPart.setAttribute("data-selected", "true");
-              shownPart.style.fill = "yellow";
-              shownPart.style.stroke = "yellow";
+              shownPart.style.fill = x.select_color;
+              shownPart.style.stroke = x.select_color;
             }
 
             if (organObject.hovertext) {
