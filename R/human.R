@@ -181,7 +181,11 @@ human <- function(
   gender <- match.arg(gender, choices = c("male", "female"), several.ok = FALSE)
   organ_to_id_map <- organ_to_id[[gender]]
   shown <- match.arg(shown, choices = names(organ_to_id_map), several.ok = TRUE)
-  selected <- match.arg(selected, choices = names(organ_to_id_map), several.ok = TRUE)
+  if (!is.null(selected)) {
+    selected <- match.arg(selected, choices = names(organ_to_id_map), several.ok = TRUE)
+  } else {
+    selected <- c()
+  }
 
   all_organs <- organ_to_id_map[unique(c(shown, selected))]
 
@@ -225,6 +229,7 @@ human <- function(
 
   x = list(
     organs = organs,
+    select_color = select_color,
     svg_text = svg_text
   )
 

@@ -16,8 +16,8 @@ HTMLWidgets.widget({
           const organObject = x.organs[organ];
 
           if (organObject.show) {
-            shownPart.style.fill = "black";
-            shownPart.style.stroke = "black";
+            shownPart.style.fill = organObject.color;
+            shownPart.style.stroke = organObject.color;
             shownPart.style.cursor = "pointer";
 
             shownPart.addEventListener("click", function () {
