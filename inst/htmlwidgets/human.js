@@ -23,7 +23,7 @@ HTMLWidgets.widget({
             shownPart.addEventListener("click", function () {
               console.log("Clicked element:", organ);
               if (window.Shiny) {
-                Shiny.setInputValue("clicked_body_part", organ);
+                Shiny.setInputValue("clicked_body_part", organObject.name);
               }
             });
 

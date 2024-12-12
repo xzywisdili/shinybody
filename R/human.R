@@ -152,7 +152,7 @@ organ_to_id <- list(
     "amygdala" = "UBERON_0001876",
     "kidney" = "UBERON_0002113",
     "renal_cortex" = "UBERON_0001225",
-    "coronary" = "artery UBERON_0001621",
+    "coronary_artery" = "UBERON_0001621",
     "submandibular_gland" = "UBERON_0001736",
     "tricuspid_valve" = "UBERON_0002134",
     "thyroid_gland" = "UBERON_0002046",
@@ -205,7 +205,8 @@ human <- function(
     org_id <- unname(all_organs)[i]
     organlist = list(
       show = TRUE,
-      selected = org_name %in% selected
+      selected = org_name %in% selected,
+      name = org_name
     )
     if (set_hovertext) {
       if (org_name %in% names(hovertext)) {
@@ -300,4 +301,3 @@ displayParticipants <- function(participants) {
   }
   to_ret
 }
-
