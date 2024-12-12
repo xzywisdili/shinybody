@@ -17,7 +17,8 @@ ui <- function() {
       selected = distinct_patients[1]
     ),
     humanOutput(outputId = "human"),
-    verbatimTextOutput(outputId = "debug")
+    verbatimTextOutput(outputId = "debug"),
+    verbatimTextOutput(outputId = "debug2")
   )
 }
 
@@ -42,6 +43,7 @@ server <- function(input, output) {
     human(gender = patient_gender)
   })
   output$debug <- renderPrint(patient_cancer_msg())
+  output$debug2 <- renderPrint(input$clicked_body_part)
 }
 
 shinyApp(ui = ui, server = server)

@@ -16,6 +16,13 @@ HTMLWidgets.widget({
           if (shownPart) {
             shownPart.style.fill = "black";
             shownPart.style.stroke = "black";
+            shownPart.addEventListener('click', function() {
+              console.log('Clicked element:', id_to_show);
+              // If using with Shiny, you can set an input value
+              if (window.Shiny) {
+                  Shiny.setInputValue('clicked_body_part', id_to_show);
+              }
+            })
           }
         });
 
