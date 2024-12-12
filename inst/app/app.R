@@ -31,6 +31,16 @@ server <- function(input, output) {
       paste(patient_rows()$cancer_origin, collapse = ", ")
     )
   })
+
+  output$human <- renderHuman({
+    g <- unique(patient_rows()$gender)
+    if (g == "F") {
+      patient_gender <- "female"
+    } else {
+      patient_gender <- "male"
+    }
+    human(gender = patient_gender)
+  })
   output$debug <- renderPrint(patient_cancer_msg())
 }
 
