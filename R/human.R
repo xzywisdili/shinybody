@@ -75,7 +75,7 @@ organ_to_id <- list(
     "skin" = "UBERON_0000014"
   ),
   female = c(
-    "parotid" = "gland UBERON_0001831",
+    "parotid_gland" = "UBERON_0001831",
     "adipose_tissue" = "UBERON_0001013",
     "heart" = "UBERON_0000948",
     "smooth_muscle" = "UBERON_0001135",
@@ -173,6 +173,7 @@ human <- function(
     shown = "thyroid_gland",
     highlighted = "adrenal_gland",
     selected = c(),
+    hovertext = NULL,
     width = NULL,
     height = NULL,
     elementId = NULL) {
@@ -181,6 +182,9 @@ human <- function(
   shown <- match.arg(shown, choices = names(organ_to_id_map), several.ok = TRUE)
   highlighted <- match.arg(highlighted, choices = names(organ_to_id_map), several.ok = TRUE)
   selected <- match.arg(selected, choices = names(organ_to_id_map), several.ok = TRUE)
+  if (!is.null(hovertext)) {
+    stopifnot(length(hovertext) == length(shown))
+  }
 
   if (gender == "male") {
     svg_file <- system.file("svgs", "homo_sapiens_male.svg", package = "shinybody")
@@ -196,10 +200,19 @@ human <- function(
   selected_ids <- organ_to_id_map[selected]
   names(selected_ids) <- NULL
 
+  all_organs <- unique(c(shown_ids, highlighted_ids, selected_ids))
+
+  organs <- list()
+  for (organ in all_organs) {
+    organlist = list(
+      show = organ %in% shown_ids,
+      highlight = organ %in% highlighted_ids,
+      selected = organ %in% selected_ids
+    )
+    organs[[organ]] <- organlist
+  }
   x = list(
-    shown = list(shown_ids),
-    highlighted  = list(highlighted_ids),
-    selected = list(selected_ids),
+    organs = organs,
     svg_text = svg_text
   )
 
