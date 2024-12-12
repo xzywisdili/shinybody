@@ -170,20 +170,50 @@ organ_to_id <- list(
 #' @export
 human <- function(
     gender = c("male", "female"),
-    shown = "thyroid_gland",
-    highlighted = "adrenal_gland",
-    selected = c(),
-    hovertext = c("thyroid_gland" = "Primary Tumor"),
+    shown = c("thyroid_gland", "adrenal_gland"),
+    selected = c("adrenal_gland"),
+    hovertext = c("thyroid_gland" = "Metastases", "adrenal_gland" = "Primary Tumor"),
+    show_color = c("thyroid_gland" = "black", "adrenal_gland" = "grey"),
+    select_color = "yellow",
     width = NULL,
     height = NULL,
     elementId = NULL) {
   gender <- match.arg(gender, choices = c("male", "female"), several.ok = FALSE)
   organ_to_id_map <- organ_to_id[[gender]]
   shown <- match.arg(shown, choices = names(organ_to_id_map), several.ok = TRUE)
-  highlighted <- match.arg(highlighted, choices = names(organ_to_id_map), several.ok = TRUE)
   selected <- match.arg(selected, choices = names(organ_to_id_map), several.ok = TRUE)
+
+  all_organs <- organ_to_id_map[unique(c(shown, selected))]
+
   if (!is.null(hovertext)) {
-    stopifnot(length(hovertext) == length(shown))
+    stopifnot(all(names(hovertext) %in% names(all_organs)))
+    set_hovertext <- TRUE
+  }
+
+  if (!is.null(names(show_color))) {
+    stopifnot(setequal(names(show_color), names(all_organs)))
+    set_colors <- TRUE
+  }
+
+  organs <- list()
+  for (i in seq_along(all_organs)) {
+    org_name <- names(all_organs)[i]
+    org_id <- unname(all_organs)[i]
+    organlist = list(
+      show = TRUE,
+      selected = org_name %in% selected
+    )
+    if (set_hovertext) {
+      if (org_name %in% names(hovertext)) {
+        organlist[["hovertext"]] <- unname(hovertext[org_name])
+      }
+    }
+    if (set_colors) {
+      organlist[["color"]] <- unname(show_color[org_name])
+    } else {
+      organlist[["color"]] <- show_color
+    }
+    organs[[org_id]] <- organlist
   }
 
   if (gender == "male") {
@@ -193,30 +223,6 @@ human <- function(
   }
   svg_text <- paste(readLines(svg_file), collapse = "\n")
 
-  shown_ids <- organ_to_id_map[shown]
-  names(shown_ids) <- NULL
-  highlighted_ids <- organ_to_id_map[highlighted]
-  names(highlighted_ids) <- NULL
-  selected_ids <- organ_to_id_map[selected]
-  names(selected_ids) <- NULL
-
-  all_organs <- unique(c(shown_ids, highlighted_ids, selected_ids))
-
-  organs <- list()
-  for (organ in all_organs) {
-    organlist = list(
-      show = organ %in% shown_ids,
-      highlight = organ %in% highlighted_ids,
-      selected = organ %in% selected_ids
-    )
-    organs[[organ]] <- organlist
-  }
-  if (!is.null(hovertext)) {
-    for (i in seq_along(hovertext)) {
-      organ_id <- organ_to_id_map[names(hovertext)[i]]
-      organs[[organ_id]][["hovertext"]] <- unname(hovertext[i])
-    }
-  }
   x = list(
     organs = organs,
     svg_text = svg_text

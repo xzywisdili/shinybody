@@ -19,7 +19,7 @@ HTMLWidgets.widget({
             shownPart.style.fill = "black";
             shownPart.style.stroke = "black";
             shownPart.style.cursor = "pointer";
-            
+
             shownPart.addEventListener("click", function () {
               console.log("Clicked element:", organ);
               if (window.Shiny) {
@@ -29,9 +29,6 @@ HTMLWidgets.widget({
 
             if (organObject.selected) {
               shownPart.setAttribute("data-selected", "true");
-            }
-
-            if (organObject.highlight) {
               shownPart.style.fill = "yellow";
               shownPart.style.stroke = "yellow";
             }
