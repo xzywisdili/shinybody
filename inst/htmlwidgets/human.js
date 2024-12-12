@@ -11,33 +11,36 @@ HTMLWidgets.widget({
         el.style.display = "inline-block";
         el.style.verticalAlign = "top";
 
-        x.shown.forEach(function (id_to_show) {
-          const shownPart = el.querySelector(`#${id_to_show}`);
-          if (shownPart) {
+        Object.keys(x.organs).forEach(function (organ) {
+          const shownPart = el.querySelector(`#${organ}`);
+          const organObject = x.organs[organ];
+
+          if (organObject.show) {
             shownPart.style.fill = "black";
             shownPart.style.stroke = "black";
-            shownPart.addEventListener('click', function() {
-              console.log('Clicked element:', id_to_show);
-              // If using with Shiny, you can set an input value
+            shownPart.style.cursor = "pointer";
+            
+            shownPart.addEventListener("click", function () {
+              console.log("Clicked element:", organ);
               if (window.Shiny) {
-                  Shiny.setInputValue('clicked_body_part', id_to_show);
+                Shiny.setInputValue("clicked_body_part", organ);
               }
-            })
-          }
-        });
+            });
 
-        x.highlighted.forEach(function (id_to_highlight) {
-          const highlightPart = el.querySelector(`#${id_to_highlight}`);
-          if (highlightPart) {
-            highlightPart.style.fill = "yellow";
-            highlightPart.style.stroke = "yellow";
-          }
-        });
+            if (organObject.selected) {
+              shownPart.setAttribute("data-selected", "true");
+            }
 
-        x.selected.forEach(function (id_to_select) {
-          const selectedPart = el.querySelector(`#${id_to_select}`);
-          if (selectedPart) {
-            selectedPart.setAttribute('data-selected', 'true');
+            if (organObject.highlight) {
+              shownPart.style.fill = "yellow";
+              shownPart.style.stroke = "yellow";
+            }
+
+            if (organObject.hovertext) {
+              shownPart.addEventListener("mouseenter", function () {
+                shownPart.style.title = organObject.hovertext;
+              });
+            }
           }
         });
       },
