@@ -173,7 +173,7 @@ human <- function(
     shown = "thyroid_gland",
     highlighted = "adrenal_gland",
     selected = c(),
-    hovertext = NULL,
+    hovertext = c("thyroid_gland" = "Primary Tumor"),
     width = NULL,
     height = NULL,
     elementId = NULL) {
@@ -210,6 +210,12 @@ human <- function(
       selected = organ %in% selected_ids
     )
     organs[[organ]] <- organlist
+  }
+  if (!is.null(hovertext)) {
+    for (i in seq_along(hovertext)) {
+      organ_id <- organ_to_id_map[names(hovertext)[i]]
+      organs[[organ_id]][["hovertext"]] <- unname(hovertext[i])
+    }
   }
   x = list(
     organs = organs,
