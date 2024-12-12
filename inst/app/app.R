@@ -28,10 +28,10 @@ server <- function(input, output) {
   patient_cancer_msg <- reactive({
     paste(
       "Selected patient's cancer originates from",
-      paste(patient_rows$cancer_origin, collapse = ", ")
+      paste(patient_rows()$cancer_origin, collapse = ", ")
     )
   })
-  output$debug <- renderPrint(patient_cancer_msg)
+  output$debug <- renderPrint(patient_cancer_msg())
 }
 
 shinyApp(ui = ui, server = server)
