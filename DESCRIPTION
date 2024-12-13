@@ -13,12 +13,11 @@ Description: `shinybody` is an `htmlwidget` of the human body that allows you
     R Markdown documents, or anything other HTML medium.
     It also functions as an input/output widget in a `shiny` app.
 Imports:
-    htmltools,
-    htmlwidgets (>= 0.8),
-    shiny
+    htmlwidgets (>= 0.8)
 Suggests:
     knitr,
-    rmarkdown
+    rmarkdown,
+    shiny
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

@@ -153,6 +153,20 @@ organ_to_id <- list(
 #' This widget visualizes an SVG-based human body, highlights specific body parts,
 #' and displays associated participant data.
 #'
+#' @param gender One of "male" or "female"
+#' @param shown The organs that should be shown, e.g. c("brain", "heart").
+#' @param selected The organs that should be in a selected state.
+#' @param hovertext Optional. A named vector where the names are shown organs
+#' and the values are the hovertext to show when the organ is hovered.
+#' @param show_color Either a single color (e.g. "black") or a named vactor of
+#' colors, where the names are shown organs and the values are colors (e.g.
+#' c("brain" = "green", "heart" = "red"))
+#' @param select_color The color that should be applied to organs with the
+#' selected state
+#' @param width Widget width
+#' @param height Widget height
+#' @param elementId ID of the widget
+#'
 #' @import htmlwidgets
 #'
 #' @export
@@ -169,7 +183,7 @@ human <- function(
   gender <- match.arg(gender, choices = c("male", "female"), several.ok = FALSE)
   organ_to_id_map <- organ_to_id[[gender]]
   shown <- match.arg(shown, choices = names(organ_to_id_map), several.ok = TRUE)
-  
+
   if (!is.null(selected)) {
     selected <- match.arg(selected, choices = names(organ_to_id_map), several.ok = TRUE)
   } else {
@@ -264,33 +278,4 @@ humanOutput <- function(outputId, width = '100%', height = '400px') {
 renderHuman <- function(expr, env = parent.frame(), quoted = FALSE) {
   if (!quoted) { expr <- substitute(expr) } # force quoted
   htmlwidgets::shinyRenderWidget(expr, humanOutput, env, quoted = TRUE)
-}
-
-
-displayParticipants <- function(participants) {
-
-  if (!"data.frame" %in% class(participants)) {
-    stop("'participants' must be a data frame.")
-  }
-
-  if (!all(c("id", "gender", "selected_parts") %in% colnames(participants))) {
-    stop("The data frame must contain 'id', 'gender', and 'selected_parts' columns.")
-  }
-
-  to_ret <- tagList()
-  for (i in seq_len(nrow(participants))) {
-    id <- participants$id[i]
-    gender <- participants$gender[i]
-    selected_parts <- unlist(strsplit(participants$selected_parts[i], ", "))
-    info_widget <- tagList(
-      tags$b(paste("Participant ID:", id)),
-      tags$b(paste("Gender:", gender)),
-      tags$b(paste("Affected Body Parts:", participants$selected_parts[i]))
-    )
-    body_widget <- human(gender = gender, shown = selected_parts, elementId = paste0("participant_", id))
-
-    participant_panel <- tagList(info_widget, body_widget)
-    to_ret[[length(to_ret) + 1]] <- participant_panel
-  }
-  to_ret
 }
