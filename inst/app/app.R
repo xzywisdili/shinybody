@@ -62,7 +62,7 @@ server <- function(input, output, session) {
     g <- patient_info()$gender
     primary_tumor <- patient_tumors()$tumor_location[patient_tumors()$is_primary_tumor]
     print(primary_tumor)
-    metastases <- unique(patient_tumors()$tumor_location[patient_tumors()$is_primary_tumor])
+    metastases <- unique(patient_tumors()$tumor_location[!patient_tumors()$is_primary_tumor])
     colors <- c("red", rep("blue", length(metastases)))
     names(colors) <- c(primary_tumor, metastases)
     hovertext <- c("Primary Tumor", rep("Metastais", length(metastases)))
@@ -85,6 +85,10 @@ server <- function(input, output, session) {
     )
   })
 
+  observeEvent(input$select_patient, {
+    print(patient_info())
+  })
+
   observeEvent(input$selected_body_parts, {
     selected_parts <- input$selected_body_parts
 
@@ -97,21 +101,14 @@ server <- function(input, output, session) {
       return()
     }
 
-    generated_data <- lapply(selected_parts, function(part) {
-      list(
-        part = part,
-        info = paste("This is additional data for", part),
-        description = paste("Description for", part, "goes here."),
-        risk_level = sample(c("Low", "Medium", "High"), 1)
-      )
-    })
+    generated_data <- patient_tumors()[patient_tumors()$tumor_location %in% input$selected_body_parts]
 
-    generated_data_df <- do.call(rbind, lapply(generated_data, as.data.frame))
 
     output$additional_data <- renderPrint({
       patient_tumors()[patient_tumors()$tumor_location %in% input$selected_body_parts,]
     })
 
+    print(generated_data)
     session$sendCustomMessage("organ_data_response", generated_data)
   })
 
