@@ -118,7 +118,6 @@ organ_to_id <- list(
     "ectocervix" = "UBERON_0012249",
     "gastroesophageal_junction" = "UBERON_0007650",
     "hippocampus" = "UBERON_0002421",
-    "title315" = "UBERON_0001954",
     "caecum" = "UBERON_0001153",
     "appendix" = "UBERON_0001154",
     "ileum" = "UBERON_0002116",
@@ -192,11 +191,15 @@ human <- function(
   if (!is.null(hovertext)) {
     stopifnot(all(names(hovertext) %in% names(all_organs)))
     set_hovertext <- TRUE
+  } else {
+    set_hovertext <- FALSE
   }
 
   if (!is.null(names(show_color))) {
     stopifnot(setequal(names(show_color), names(all_organs)))
     set_colors <- TRUE
+  } else {
+    set_colors <- FALSE
   }
 
   organs <- list()
