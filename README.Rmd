@@ -1,6 +1,5 @@
 ---
 output: github_document
-always_allow_html: true
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -36,7 +35,7 @@ devtools::install_github("robert-norberg/shinybody")
 
 Here is a simple example of using the `human` widget in an R Markdown document:
 
-```{r example}
+```{r example, eval = FALSE}
 library(shinybody)
 
 human(
@@ -48,6 +47,8 @@ human(
   select_color = "yellow"
 )
 ```
+
+<img src="man/figures/README-demo-1.png" width="100%" />
 
 Here is a complete list of the organs that are available:
 
@@ -68,9 +69,6 @@ all_organs
 Here is a very simple shiny app using the `human` widget:
 
 ```{r, eval = FALSE}
-library(shiny)
-library(shinybody)
-
 library(shiny)
 library(shinybody)
 
@@ -125,4 +123,5 @@ server <- function(input, output, session) {
 shinyApp(ui = ui, server = server)
 ```
 
+<img src="man/figures/README-demo-2.png" width="100%" />
 
