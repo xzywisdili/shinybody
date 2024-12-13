@@ -1,12 +1,6 @@
 library(shiny)
 library(shinybody)
 
-# read in data
-data_path <- system.file("data", "cancer_dataset.csv", package = "shinybody")
-df <- read.csv(data_path, header = TRUE)
-
-distinct_patients <- unique(df$sample_id)
-
 ui <- function() {
   fluidPage(
     tags$head(
@@ -42,9 +36,9 @@ ui <- function() {
         selectInput(
           inputId = "select_patient",
           label = "Select a Patient",
-          choices = distinct_patients,
+          choices = patients$patient_id,
           multiple = FALSE,
-          selected = distinct_patients[1]
+          selected = patients$patient_id[1]
         )
       )
     ),
@@ -57,14 +51,18 @@ ui <- function() {
 }
 
 server <- function(input, output, session) {
-  patient_rows <- reactive({
-    df[df$sample_id == input$select_patient,]
+  patient_tumors <- reactive({
+    tumors[tumors$patient_id == input$select_patient,]
+  })
+  patient_info <- reactive({
+    patients[patients$patient_id == input$select_patient,]
   })
 
   output$human <- renderHuman({
-    g <- ifelse(unique(patient_rows()$gender) == "F", "female", "male")
-    primary_tumor <- unique(patient_rows()$cancer_origin)
-    metastases <- unique(patient_rows()$metastasis_area)
+    g <- patient_info()$gender
+    primary_tumor <- patient_tumors()$tumor_location[patient_tumors()$is_primary_tumor]
+    print(primary_tumor)
+    metastases <- unique(patient_tumors()$tumor_location[patient_tumors()$is_primary_tumor])
     colors <- c("red", rep("blue", length(metastases)))
     names(colors) <- c(primary_tumor, metastases)
     hovertext <- c("Primary Tumor", rep("Metastais", length(metastases)))
@@ -80,7 +78,7 @@ server <- function(input, output, session) {
   })
 
   output$debug <- renderPrint({
-    primary_tumor <- unique(patient_rows()$cancer_origin)
+    primary_tumor <- patient_tumors()$tumor_location[patient_tumors()$is_primary_tumor]
     paste(
       "Selected patient's cancer originates from",
       primary_tumor
@@ -111,7 +109,7 @@ server <- function(input, output, session) {
     generated_data_df <- do.call(rbind, lapply(generated_data, as.data.frame))
 
     output$additional_data <- renderPrint({
-      generated_data_df
+      patient_tumors()[patient_tumors()$tumor_location %in% input$selected_body_parts,]
     })
 
     session$sendCustomMessage("organ_data_response", generated_data)
