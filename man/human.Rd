@@ -19,7 +19,8 @@ human(
 \arguments{
 \item{gender}{One of "male" or "female"}
 
-\item{shown}{The organs that should be shown, e.g. c("brain", "heart").}
+\item{shown}{The organs that should be shown, e.g. c("brain", "heart").
+See ?shinybody_organs for a list of all organs that can be shown.}
 
 \item{selected}{The organs that should be in a selected state.}
 

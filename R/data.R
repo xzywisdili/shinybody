@@ -1,3 +1,15 @@
+#' Organs available in shinybody
+#'
+#' A list of the organs that shinybody can display
+#'
+#' @format ## `shinybody_organs`
+#' A list with two elements: `male` and `female`.
+#' \describe{
+#'   \item{male}{A list of the organs that can be shown on the male body avatar}
+#'   \item{female}{A list of the organs that can be shown on the male body avatar}
+#' }
+"shinybody_organs"
+
 #' Example data set of tumors
 #'
 #' A randomly generated dataset of tumors to use in examples

@@ -155,6 +155,7 @@ organ_to_id <- list(
 #'
 #' @param gender One of "male" or "female"
 #' @param shown The organs that should be shown, e.g. c("brain", "heart").
+#' See ?shinybody_organs for a list of all organs that can be shown.
 #' @param selected The organs that should be in a selected state.
 #' @param hovertext Optional. A named vector where the names are shown organs
 #' and the values are the hovertext to show when the organ is hovered.
