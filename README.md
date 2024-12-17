@@ -74,6 +74,7 @@ all_organs
 #> cerebellar_hemisphere       ✅     ✅
 #> cerebellum                  ✅     ✅
 #> cerebral_cortex             ✅     ✅
+#> circulatory_system          ✅     ✅
 #> colon                       ✅     ✅
 #> coronary_artery             ✅     ✅
 #> diaphragm                   ✅     ✅
@@ -92,7 +93,6 @@ all_organs
 #> kidney                      ✅     ✅
 #> left_atrium                 ✅     ✅
 #> left_ventricle              ✅     ✅
-#> leukocyte                   ✅     ❌
 #> liver                       ✅     ✅
 #> lung                        ✅     ✅
 #> lymph_node                  ✅     ✅
