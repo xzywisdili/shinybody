@@ -1,6 +1,6 @@
 Package: shinybody
 Title: An Interactive Anatomography Widget for Shiny
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: c(
     person("Robert", "Norberg", , "Robert.Norberg@moffitt.org", role = c("aut", "cre")),
     person("Sebastian", "Zapata-Tamayo", , "Juan.Zapata-Tamayo@moffitt.org", role = c("aut", "ctb")),
