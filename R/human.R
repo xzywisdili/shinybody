@@ -159,7 +159,9 @@ organ_to_id <- list(
 #' See ?shinybody_organs for a list of all organs that can be shown.
 #' @param selected The organs that should be in a selected state.
 #' @param hovertext Optional. A named vector where the names are shown organs
-#' and the values are the hovertext to show when the organ is hovered.
+#' and the values are the hovertext to show when the organ is hovered. Or a
+#' named list, where the names are shown organs and the values are shiny.tag
+#' objects.
 #' @param show_color Either a single color (e.g. "black") or a named vactor of
 #' colors, where the names are shown organs and the values are colors (e.g.
 #' c("brain" = "green", "heart" = "red"))
@@ -219,7 +221,11 @@ human <- function(
     )
     if (set_hovertext) {
       if (org_name %in% names(hovertext)) {
-        organlist[["hovertext"]] <- unname(hovertext[org_name])
+        if (is.character(hovertext)) {
+          organlist[["hovertext"]] <- unname(hovertext[org_name])
+        } else {
+          organlist[["hovertext"]] <- as.character(hovertext[[org_name]])
+        }
       }
     }
     if (set_colors) {
