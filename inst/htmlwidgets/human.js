@@ -41,8 +41,9 @@ HTMLWidgets.widget({
             shownPart.style.stroke = organObject.color;
             shownPart.style.cursor = "pointer";
 
+            let tooltip_contents = organObject.hovertext || organObject.name;
             shownPart.addEventListener("mouseenter", function (event) {
-              tooltip.textContent = organObject.name || organ;
+              tooltip.innerHTML = tooltip_contents;
               tooltip.style.left = `${event.pageX + 10}px`;
               tooltip.style.top = `${event.pageY + 10}px`;
               tooltip.style.display = "block";
