@@ -76,6 +76,7 @@ HTMLWidgets.widget({
               }
 
               if (window.Shiny) {
+                Shiny.setInputValue("clicked_body_part", organObject.name);
                 if (selectedOrgans.length > 0) {
                   Shiny.setInputValue("selected_body_parts", selectedOrgans);
                 } else {
