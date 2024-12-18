@@ -64,7 +64,7 @@ organ_to_id <- list(
     "cerebellar_hemisphere" = "UBERON_0002245",
     "kidney" = "UBERON_0002113",
     "renal_cortex" = "UBERON_0001225",
-    "bone" = "UBERON_00024818",
+    "bone" = "UBERON_0002481",
     "cartilage" = "UBERON_0007844",
     "esophagus" = "UBERON_0001043",
     "salivary_gland" = "UBERON_0001044",
@@ -155,18 +155,24 @@ organ_to_id <- list(
 #' and displays associated participant data.
 #'
 #' @param gender One of "male" or "female"
-#' @param shown The organs that should be shown, e.g. c("brain", "heart").
-#' See ?shinybody_organs for a list of all organs that can be shown.
-#' @param selected The organs that should be in a selected state.
-#' @param hovertext Optional. A named vector where the names are shown organs
-#' and the values are the hovertext to show when the organ is hovered. Or a
-#' named list, where the names are shown organs and the values are shiny.tag
-#' objects.
-#' @param show_color Either a single color (e.g. "black") or a named vactor of
-#' colors, where the names are shown organs and the values are colors (e.g.
-#' c("brain" = "green", "heart" = "red"))
+#' @param organ_df A data.frame with at least an `organ` column, and optionally
+#' the following columns:
+#' \itemize{
+#' \item{show }{A logical (Boolean) column indicating whether or not each organ
+#' should be visible. If absent, all organs will be shown.}
+#' \item{selected }{A logical (Boolean) column indicating whether or not each
+#' organ should be in a "selected" state. If absent, no organs will be selected.}
+#' \item{hovertext }{A character column or a column containing `shiny.tag`
+#' objects. This will be the contents of the tooltip that appears when the organ
+#' is hovered over. If absent, the tooltip will contain the title-cased name of
+#' the organ (underscores replaced with spaces).}
+#' \item{color }{A character column indicating the color of the organ. If absent,
+#' all organs will be shown in black.}
+#' }
+#' If `organ_df` has other columns, these will be ignored.
 #' @param select_color The color that should be applied to organs with the
-#' selected state
+#' "selected" state (activated by clicking the organ and deactivated by clicking
+#' again).
 #' @param width Widget width
 #' @param height Widget height
 #' @param elementId ID of the widget
@@ -174,66 +180,101 @@ organ_to_id <- list(
 #' @import htmlwidgets
 #'
 #' @export
+#'
+#' @examples
+#' example_organs <- c("brain", "eye", "heart", "stomach", "bladder")
+#' my_organ_df <- subset(shinybody_organs, organ %in% example_organs)
+#' my_organ_df$show <- TRUE
+#' my_organ_df$color <- grDevices::rainbow(nrow(my_organ_df))
+#' my_organ_df$selected[1] <- TRUE
+#' my_organ_df$hovertext <- mapply(
+#'   function(o, clr) htmltools::strong(tools::toTitleCase(o), style = paste("color:", clr)),
+#'   my_organ_df$organ,
+#'   my_organ_df$color,
+#'   SIMPLIFY = FALSE
+#' )
+#' human(gender = "female", organ_df = my_organ_df)
 human <- function(
     gender = c("male", "female"),
-    shown = c("thyroid_gland", "adrenal_gland"),
-    selected = c("adrenal_gland"),
-    hovertext = c("thyroid_gland" = "Metastases", "adrenal_gland" = "Primary Tumor"),
-    show_color = c("thyroid_gland" = "red", "adrenal_gland" = "grey"),
+    organ_df,
     select_color = "yellow",
     width = NULL,
     height = NULL,
     elementId = NULL) {
   gender <- match.arg(gender, choices = c("male", "female"), several.ok = FALSE)
   organ_to_id_map <- organ_to_id[[gender]]
-  shown <- match.arg(shown, choices = names(organ_to_id_map), several.ok = TRUE)
-
-  if (!is.null(selected)) {
-    selected <- match.arg(selected, choices = names(organ_to_id_map), several.ok = TRUE)
-  } else {
-    selected <- c()
+  stopifnot(is.data.frame(organ_df))
+  stopifnot("organ" %in% names(organ_df))
+  if (anyDuplicated(organ_df$organ)) {
+    duplicated_organs <- organ_df$organ[duplicated(organ_df$organ)]
+    err_msg <- paste(
+      "The following organs appear in `organ_df` more than once:",
+      paste(duplicated_organs, collapse = ", ")
+    )
+    stop(err_msg)
   }
 
-  all_organs <- organ_to_id_map[unique(c(shown, selected))]
-
-  if (!is.null(hovertext)) {
-    stopifnot(all(names(hovertext) %in% names(all_organs)))
-    set_hovertext <- TRUE
+  if ("show" %in% names(organ_df)) {
+    stopifnot(is.logical(organ_df$show))
+    organs_to_show <- organ_df$organ[organ_df$show]
   } else {
-    set_hovertext <- FALSE
+    organ_df$show <- TRUE
+    organs_to_show <- organ_df$organ
+  }
+  stopifnot(all(organs_to_show %in% names(organ_to_id_map)))
+
+  if ("selected" %in% names(organ_df)) {
+    stopifnot(is.logical(organ_df$selected))
+    organs_selected <- organ_df$organ[organ_df$selected]
+    selected_not_shown <- organs_selected[!organs_selected %in% organs_to_show]
+    if (length(selected_not_shown) > 0) {
+      warning_msg <- paste(
+        "The following organs are selected, but not shown:",
+        paste(selected_not_shown, collapse = ", ")
+      )
+      warning(warning_msg)
+      organs_selected <- organs_selected[organs_selected %in% organs_to_show]
+      organ_df$selected[organ_df$organ %in% selected_not_shown] <- FALSE
+    }
+  } else {
+    organs_selected <- c()
+    organ_df$selected <- FALSE
   }
 
-  if (!is.null(names(show_color))) {
-    stopifnot(setequal(names(show_color), names(all_organs)))
+  if ("hovertext" %in% names(organ_df)) {
+    if (is.list(organ_df$hovertext)) {
+      organ_df$hovertext <- sapply(organ_df$hovertext, as.character)
+    }
+  } else {
+    organ_df$hovertext <- tools::toTitleCase(gsub("_", " ", organ_df$organ))
+  }
+
+  if ("color" %in% names(organ_df)) {
     set_colors <- TRUE
+    organ_df$color <- htmltools::parseCssColors(organ_df$color, mustWork = FALSE)
+    organs_w_invalid_color <- organ_df$organ[is.na(organ_df$color)]
+    if (length(organs_w_invalid_color) > 0) {
+      warning_msg <- paste(
+        "The following organs have invalid colors specified:",
+        paste(organs_w_invalid_color, collapse = ", ")
+      )
+      warning(warning_msg)
+      organ_df$color[is.na(organ_df$color)] <- "#A9A9A9" # dark grey
+    }
+
   } else {
     set_colors <- FALSE
+    organ_df$color <- "#000000" # black
   }
 
   organs <- list()
-  for (i in seq_along(all_organs)) {
-    org_name <- names(all_organs)[i]
-    org_id <- unname(all_organs)[i]
-    organlist = list(
-      show = TRUE,
-      selected = org_name %in% selected,
-      name = org_name
+  for (i in seq_len(nrow(organ_df))) {
+    organlist <- as.list(
+      organ_df[i, c("organ", "show", "selected", "hovertext", "color")]
     )
-    if (set_hovertext) {
-      if (org_name %in% names(hovertext)) {
-        if (is.character(hovertext)) {
-          organlist[["hovertext"]] <- unname(hovertext[org_name])
-        } else {
-          organlist[["hovertext"]] <- as.character(hovertext[[org_name]])
-        }
-      }
-    }
-    if (set_colors) {
-      organlist[["color"]] <- unname(show_color[org_name])
-    } else {
-      organlist[["color"]] <- show_color
-    }
-    organs[[org_id]] <- organlist
+    organlist$name <- organlist$organ
+    oid <- organ_to_id_map[[organlist$organ]]
+    organs[[oid]] <- organlist
   }
 
   if (gender == "male") {
@@ -249,14 +290,15 @@ human <- function(
     svg_text = svg_text
   )
 
-  # create widget
-  htmlwidgets::createWidget(
-    name = 'human',
-    x,
-    width = width,
-    height = height,
-    package = 'shinybody',
-    elementId = elementId
+  htmltools::browsable(
+    htmlwidgets::createWidget(
+      name = 'human',
+      x,
+      width = width,
+      height = height,
+      package = 'shinybody',
+      elementId = elementId
+    )
   )
 }
 

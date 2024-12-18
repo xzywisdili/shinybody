@@ -7,7 +7,7 @@
 <!-- badges: end -->
 
 `shinybody` is an `htmlwidget` of the human body that allows you to
-hide/show and assign colors to 80 different body parts. The `human`
+hide/show and assign colors to 79 different body parts. The `human`
 widget is an `htmlwidget`, so it works in Quarto documents, R Markdown
 documents, or anything other HTML medium. It also functions as an
 input/output widget in a `shiny` app.
@@ -30,113 +30,104 @@ document:
 ``` r
 library(shinybody)
 
-human(
-  gender = "female",
-  shown = c("trachea", "stomach", "duodenum", "esophagus", "small_intestine"),
-  selected = c("esophagus", "duodenum"),
-  hovertext = NULL,
-  show_color = "black",
-  select_color = "yellow"
+example_organs <- c("brain", "eye", "heart", "stomach", "bladder")
+my_organ_df <- subset(shinybody::shinybody_organs, organ %in% example_organs)
+my_organ_df$show <- TRUE
+my_organ_df$color <- grDevices::rainbow(nrow(my_organ_df))
+my_organ_df$selected[1] <- TRUE
+my_organ_df$hovertext <- mapply(
+  function(o, clr) htmltools::strong(tools::toTitleCase(o), style = paste("color:", clr)),
+  my_organ_df$organ,
+  my_organ_df$color,
+  SIMPLIFY = FALSE
 )
+human(gender = "female", organ_df = my_organ_df)
 ```
 
 <img src="man/figures/README-demo-1.png" width="100%" />
 
 Here is a complete list of the organs that are available:
 
-``` r
-organ_names <- sort(union(
-  names(shinybody:::organ_to_id[["male"]]),
-  names(shinybody:::organ_to_id[["female"]])
-))
-all_organs <- data.frame(
-  row.names = organ_names,
-  Male = ifelse(organ_names %in% names(shinybody:::organ_to_id[["male"]]), "✅", "❌"),
-  Female = ifelse(organ_names %in% names(shinybody:::organ_to_id[["female"]]), "✅", "❌")
-)
-
-all_organs
-#>                           Male Female
-#> adipose_tissue              ✅     ✅
-#> adrenal_gland               ✅     ✅
-#> amygdala                    ✅     ✅
-#> aorta                       ✅     ✅
-#> appendix                    ✅     ✅
-#> atrial_appendage            ✅     ✅
-#> bladder                     ✅     ✅
-#> bone                        ✅     ✅
-#> bone_marrow                 ✅     ✅
-#> brain                       ✅     ✅
-#> breast                      ✅     ✅
-#> bronchus                    ✅     ✅
-#> caecum                      ✅     ✅
-#> cartilage                   ✅     ✅
-#> cerebellar_hemisphere       ✅     ✅
-#> cerebellum                  ✅     ✅
-#> cerebral_cortex             ✅     ✅
-#> circulatory_system          ✅     ✅
-#> colon                       ✅     ✅
-#> coronary_artery             ✅     ✅
-#> diaphragm                   ✅     ✅
-#> duodenum                    ✅     ✅
-#> ectocervix                  ❌     ✅
-#> endometrium                 ❌     ✅
-#> epididymis                  ✅     ❌
-#> esophagus                   ✅     ✅
-#> eye                         ✅     ✅
-#> fallopian_tube              ❌     ✅
-#> frontal_cortex              ✅     ✅
-#> gall_bladder                ✅     ✅
-#> gastroesophageal_junction   ✅     ✅
-#> heart                       ✅     ✅
-#> ileum                       ✅     ✅
-#> kidney                      ✅     ✅
-#> left_atrium                 ✅     ✅
-#> left_ventricle              ✅     ✅
-#> liver                       ✅     ✅
-#> lung                        ✅     ✅
-#> lymph_node                  ✅     ✅
-#> mitral_valve                ✅     ✅
-#> nasal_pharynx               ✅     ✅
-#> nasal_septum                ✅     ✅
-#> nerve                       ✅     ✅
-#> nose                        ✅     ✅
-#> oral_cavity                 ✅     ✅
-#> ovary                       ❌     ✅
-#> pancreas                    ✅     ✅
-#> parotid_gland               ✅     ✅
-#> penis                       ✅     ❌
-#> pituitary_gland             ✅     ✅
-#> placenta                    ❌     ✅
-#> pleura                      ✅     ✅
-#> prefrontal_cortex           ✅     ✅
-#> prostate_gland              ✅     ❌
-#> pulmonary_valve             ✅     ✅
-#> rectum                      ✅     ✅
-#> renal_cortex                ✅     ✅
-#> salivary_gland              ✅     ✅
-#> seminal_vesicle             ✅     ❌
-#> skeletal_muscle             ✅     ✅
-#> skin                        ✅     ✅
-#> small_intestine             ✅     ✅
-#> smooth_muscle               ✅     ✅
-#> spinal_cord                 ✅     ✅
-#> spleen                      ✅     ✅
-#> stomach                     ✅     ✅
-#> submandibular_gland         ✅     ✅
-#> temporal_lobe               ✅     ✅
-#> testis                      ✅     ❌
-#> throat                      ✅     ✅
-#> thyroid_gland               ✅     ✅
-#> tongue                      ✅     ✅
-#> tonsil                      ✅     ✅
-#> trachea                     ✅     ✅
-#> tricuspid_valve             ✅     ✅
-#> uterine_cervix              ❌     ✅
-#> uterus                      ❌     ✅
-#> vagina                      ❌     ✅
-#> vas_deferens                ✅     ❌
-```
+    #>                           Male Female
+    #> adipose_tissue              ✅     ✅
+    #> adrenal_gland               ✅     ✅
+    #> amygdala                    ✅     ✅
+    #> aorta                       ✅     ✅
+    #> appendix                    ✅     ✅
+    #> atrial_appendage            ✅     ✅
+    #> bladder                     ✅     ✅
+    #> bone                        ✅     ✅
+    #> bone_marrow                 ✅     ✅
+    #> brain                       ✅     ✅
+    #> breast                      ✅     ✅
+    #> bronchus                    ✅     ✅
+    #> caecum                      ✅     ✅
+    #> cartilage                   ✅     ✅
+    #> cerebellar_hemisphere       ✅     ✅
+    #> cerebellum                  ✅     ✅
+    #> cerebral_cortex             ✅     ✅
+    #> circulatory_system          ✅     ✅
+    #> colon                       ✅     ✅
+    #> coronary_artery             ✅     ✅
+    #> diaphragm                   ✅     ✅
+    #> duodenum                    ✅     ✅
+    #> ectocervix                  ❌     ✅
+    #> endometrium                 ❌     ✅
+    #> epididymis                  ✅     ❌
+    #> esophagus                   ✅     ✅
+    #> eye                         ✅     ✅
+    #> fallopian_tube              ❌     ✅
+    #> frontal_cortex              ✅     ✅
+    #> gall_bladder                ✅     ✅
+    #> gastroesophageal_junction   ✅     ✅
+    #> heart                       ✅     ✅
+    #> ileum                       ✅     ✅
+    #> kidney                      ✅     ✅
+    #> left_atrium                 ✅     ✅
+    #> left_ventricle              ✅     ✅
+    #> liver                       ✅     ✅
+    #> lung                        ✅     ✅
+    #> lymph_node                  ✅     ✅
+    #> mitral_valve                ✅     ✅
+    #> nasal_pharynx               ✅     ✅
+    #> nasal_septum                ✅     ✅
+    #> nerve                       ✅     ✅
+    #> nose                        ✅     ✅
+    #> oral_cavity                 ✅     ✅
+    #> ovary                       ❌     ✅
+    #> pancreas                    ✅     ✅
+    #> parotid_gland               ✅     ✅
+    #> penis                       ✅     ❌
+    #> pituitary_gland             ✅     ✅
+    #> placenta                    ❌     ✅
+    #> pleura                      ✅     ✅
+    #> prefrontal_cortex           ✅     ✅
+    #> prostate_gland              ✅     ❌
+    #> pulmonary_valve             ✅     ✅
+    #> rectum                      ✅     ✅
+    #> renal_cortex                ✅     ✅
+    #> salivary_gland              ✅     ✅
+    #> seminal_vesicle             ✅     ❌
+    #> skeletal_muscle             ✅     ✅
+    #> skin                        ✅     ✅
+    #> small_intestine             ✅     ✅
+    #> smooth_muscle               ✅     ✅
+    #> spinal_cord                 ✅     ✅
+    #> spleen                      ✅     ✅
+    #> stomach                     ✅     ✅
+    #> submandibular_gland         ✅     ✅
+    #> temporal_lobe               ✅     ✅
+    #> testis                      ✅     ❌
+    #> throat                      ✅     ✅
+    #> thyroid_gland               ✅     ✅
+    #> tongue                      ✅     ✅
+    #> tonsil                      ✅     ✅
+    #> trachea                     ✅     ✅
+    #> tricuspid_valve             ✅     ✅
+    #> uterine_cervix              ❌     ✅
+    #> uterus                      ❌     ✅
+    #> vagina                      ❌     ✅
+    #> vas_deferens                ✅     ❌
 
 Here is a very simple shiny app using the `human` widget:
 
@@ -161,7 +152,8 @@ ui <- function() {
       selected = names(shinybody:::organ_to_id[["male"]])[1:5]
     ),
     humanOutput(outputId = "human_widget"),
-    verbatimTextOutput(outputId = "clicked_body_part_msg")
+    verbatimTextOutput(outputId = "clicked_body_part_msg"),
+    verbatimTextOutput(outputId = "selected_body_parts_msg")
   )
 }
 
@@ -178,17 +170,18 @@ server <- function(input, output, session) {
   })
   
   output$human_widget <- renderHuman({
+    selected_organ_df <- subset(shinybody::shinybody_organs, organ %in% input$body_parts)
+    selected_organ_df$show <- TRUE
     human(
-      gender = input$gender,
-      shown = input$body_parts,
-      selected = NULL,
-      show_color = "black",
-      select_color = "red",
-      hovertext = NULL
+      organ_df = selected_organ_df,
+      select_color = "red"
     )
   })
   output$clicked_body_part_msg <- renderPrint({
     paste("You Clicked:", input$clicked_body_part)
+  })
+  output$selected_body_parts_msg <- renderPrint({
+    paste("Selected:", paste(input$selected_body_parts, collapse = ", "))
   })
 }
 

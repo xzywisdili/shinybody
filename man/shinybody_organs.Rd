@@ -7,10 +7,23 @@
 \format{
 \subsection{\code{shinybody_organs}}{
 
-A list with two elements: \code{male} and \code{female}.
+A data frame with 79 rows and 7 columns:
 \describe{
-\item{male}{A list of the organs that can be shown on the male body avatar}
-\item{female}{A list of the organs that can be shown on the male body avatar}
+\item{organ}{The name of the organ the row describes (must be unique)}
+\item{male}{Boolean. TRUE if the body part can be shown on the male avatar,
+FALSE otherwise.}
+\item{female}{Boolean. TRUE if the body part can be shown on the female
+avatar, FALSE otherwise.}
+\item{show}{Boolean. TRUE if the body part should be shown, FALSE if it
+should be hidden.}
+\item{selected}{Boolean. TRUE if the body part should appear in a "selected"
+state, FALSE otherwise.}
+\item{hovertext}{A character column or a column containing \code{shiny.tag}
+objects. This will be the contents of the tooltip that appears when the organ
+is hovered over. If absent, the tooltip will contain the title-cased name of
+the organ (underscores replaced with spaces).}
+\item{color}{A character column indicating the color the organ should appear
+if shown.}
 }
 }
 }

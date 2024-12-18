@@ -72,17 +72,15 @@ server <- function(input, output, session) {
     g <- patient_info()$gender
     primary_tumor <- patient_tumors()$tumor_location[patient_tumors()$is_primary_tumor]
     metastases <- unique(patient_tumors()$tumor_location[!patient_tumors()$is_primary_tumor])
-    colors <- c("red", rep("blue", length(metastases)))
-    names(colors) <- c(primary_tumor, metastases)
-    hovertext <- c("Primary Tumor", rep("Metastais", length(metastases)))
-    names(hovertext) <- c(primary_tumor, metastases)
+    patient_organ_df <- subset(shinybody::shinybody_organs, organ %in% c(primary_tumor, metastases))
+    patient_organ_df$show <- TRUE
+    patient_organ_df$color <- ifelse(patient_organ_df$organ == primary_tumor, "red", "blue")
+    patient_organ_df$hovertext <- ifelse(patient_organ_df$organ == primary_tumor, "Primary Tumor", "Metastasis")
+    patient_organ_df$selected[patient_organ_df$organ == primary_tumor] <- TRUE
     human(
       gender = g,
-      shown = c(primary_tumor, metastases),
-      selected = primary_tumor,
-      show_color = colors,
-      select_color = "red",
-      hovertext = hovertext
+      organ_df = patient_organ_df,
+      select_color = "yellow"
     )
   })
 
@@ -117,8 +115,9 @@ server <- function(input, output, session) {
   })
 
   output$selected_organ_data <- renderUI({
+    req(input$select_patient)
     selected_parts <- input$selected_body_parts
-    if (length(selected_parts) == 1 && selected_parts == "empty") {
+    if (length(selected_parts) == 0) {
       return(p("No organs selected."))
     }
 

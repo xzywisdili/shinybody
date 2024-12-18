@@ -6,10 +6,7 @@
 \usage{
 human(
   gender = c("male", "female"),
-  shown = c("thyroid_gland", "adrenal_gland"),
-  selected = c("adrenal_gland"),
-  hovertext = c(thyroid_gland = "Metastases", adrenal_gland = "Primary Tumor"),
-  show_color = c(thyroid_gland = "red", adrenal_gland = "grey"),
+  organ_df,
   select_color = "yellow",
   width = NULL,
   height = NULL,
@@ -19,20 +16,25 @@ human(
 \arguments{
 \item{gender}{One of "male" or "female"}
 
-\item{shown}{The organs that should be shown, e.g. c("brain", "heart").
-See ?shinybody_organs for a list of all organs that can be shown.}
-
-\item{selected}{The organs that should be in a selected state.}
-
-\item{hovertext}{Optional. A named vector where the names are shown organs
-and the values are the hovertext to show when the organ is hovered.}
-
-\item{show_color}{Either a single color (e.g. "black") or a named vactor of
-colors, where the names are shown organs and the values are colors (e.g.
-c("brain" = "green", "heart" = "red"))}
+\item{organ_df}{A data.frame with at least an \code{organ} column, and optionally
+the following columns:
+\itemize{
+\item{show }{A logical (Boolean) column indicating whether or not each organ
+should be visible. If absent, all organs will be shown.}
+\item{selected }{A logical (Boolean) column indicating whether or not each
+organ should be in a "selected" state. If absent, no organs will be selected.}
+\item{hovertext }{A character column or a column containing \code{shiny.tag}
+objects. This will be the contents of the tooltip that appears when the organ
+is hovered over. If absent, the tooltip will contain the title-cased name of
+the organ (underscores replaced with spaces).}
+\item{color }{A character column indicating the color of the organ. If absent,
+all organs will be shown in black.}
+}
+If \code{organ_df} has other columns, these will be ignored.}
 
 \item{select_color}{The color that should be applied to organs with the
-selected state}
+"selected" state (activated by clicking the organ and deactivated by clicking
+again).}
 
 \item{width}{Widget width}
 
@@ -43,4 +45,18 @@ selected state}
 \description{
 This widget visualizes an SVG-based human body, highlights specific body parts,
 and displays associated participant data.
+}
+\examples{
+example_organs <- c("brain", "eye", "heart", "stomach", "bladder")
+my_organ_df <- subset(shinybody_organs, organ \%in\% example_organs)
+my_organ_df$show <- TRUE
+my_organ_df$color <- grDevices::rainbow(nrow(my_organ_df))
+my_organ_df$selected[1] <- TRUE
+my_organ_df$hovertext <- mapply(
+  function(o, clr) htmltools::strong(tools::toTitleCase(o), style = paste("color:", clr)),
+  my_organ_df$organ,
+  my_organ_df$color,
+  SIMPLIFY = FALSE
+)
+human(gender = "female", organ_df = my_organ_df)
 }

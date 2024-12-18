@@ -37,9 +37,21 @@ HTMLWidgets.widget({
           const organObject = x.organs[organ];
 
           if (organObject.show) {
-            shownPart.style.fill = organObject.color;
-            shownPart.style.stroke = organObject.color;
             shownPart.style.cursor = "pointer";
+            if (organObject.selected) {
+              shownPart.setAttribute("data-selected", "true");
+              shownPart.style.fill = x.select_color;
+              shownPart.style.stroke = "black";
+              shownPart.style.strokeWidth = "1px";
+              shownPart.style.opacity = 1;
+              selectedOrgans.push(organObject.name);
+            } else {
+              shownPart.setAttribute("data-selected", "false");
+              shownPart.style.fill = organObject.color;
+              shownPart.style.stroke = organObject.color;
+              shownPart.style.strokeWidth = "0.3px";
+              shownPart.style.opacity = 0.6;
+            }
 
             let tooltip_contents = organObject.hovertext || organObject.name;
             shownPart.addEventListener("mouseenter", function (event) {
@@ -61,31 +73,33 @@ HTMLWidgets.widget({
             shownPart.addEventListener("click", function () {
               if (shownPart.getAttribute("data-selected") === "true") {
                 shownPart.removeAttribute("data-selected");
+                shownPart.style.fill = organObject.color;
                 shownPart.style.stroke = organObject.color;
                 shownPart.style.strokeWidth = "0.3px";
+                shownPart.style.opacity = 0.6;
 
                 selectedOrgans = selectedOrgans.filter(
                   (item) => item !== organObject.name
                 );
               } else {
                 shownPart.setAttribute("data-selected", "true");
+                shownPart.style.fill = x.select_color;
                 shownPart.style.stroke = "black";
                 shownPart.style.strokeWidth = "1px";
-
+                shownPart.style.opacity = 1;
                 selectedOrgans.push(organObject.name);
               }
 
               if (window.Shiny) {
                 Shiny.setInputValue("clicked_body_part", organObject.name);
-                if (selectedOrgans.length > 0) {
-                  Shiny.setInputValue("selected_body_parts", selectedOrgans);
-                } else {
-                  Shiny.setInputValue("selected_body_parts", "empty");
-                }
+                Shiny.setInputValue("selected_body_parts", selectedOrgans);
               }
             });
           }
         });
+        if (window.Shiny) {
+          Shiny.setInputValue("selected_body_parts", selectedOrgans);
+        }
       },
 
       resize: function (width, height) {
