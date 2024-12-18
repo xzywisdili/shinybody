@@ -1,16 +1,16 @@
 Package: shinybody
 Title: An Interactive Anatomography Widget for Shiny
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: c(
     person("Robert", "Norberg", , "Robert.Norberg@moffitt.org", role = c("aut", "cre")),
     person("Sebastian", "Zapata-Tamayo", , "Juan.Zapata-Tamayo@moffitt.org", role = c("aut", "ctb")),
     person("Mehrun", "Huda", , "mehrunrox@gmail.com", role = c("aut", "ctb"),
            comment = c(ORCID = "0000-0002-4951-8906"))
   )
-Description: `shinybody` is an `htmlwidget` of the human body that allows you
-    to hide/show and assign colors to 80 different body parts. The `human`
+Description: An `htmlwidget` of the human body that allows you
+    to hide/show and assign colors to 79 different body parts. The `human`
     widget is an `htmlwidget`, so it works in Quarto documents,
-    R Markdown documents, or anything other HTML medium.
+    R Markdown documents, or any other HTML medium.
     It also functions as an input/output widget in a `shiny` app.
 Imports:
     htmlwidgets (>= 0.8),

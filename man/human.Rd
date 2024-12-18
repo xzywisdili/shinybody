@@ -18,7 +18,7 @@ human(
 
 \item{organ_df}{A data.frame with at least an \code{organ} column, and optionally
 the following columns:
-\itemize{
+\describe{
 \item{show }{A logical (Boolean) column indicating whether or not each organ
 should be visible. If absent, all organs will be shown.}
 \item{selected }{A logical (Boolean) column indicating whether or not each

@@ -157,7 +157,7 @@ organ_to_id <- list(
 #' @param gender One of "male" or "female"
 #' @param organ_df A data.frame with at least an `organ` column, and optionally
 #' the following columns:
-#' \itemize{
+#' \describe{
 #' \item{show }{A logical (Boolean) column indicating whether or not each organ
 #' should be visible. If absent, all organs will be shown.}
 #' \item{selected }{A logical (Boolean) column indicating whether or not each
