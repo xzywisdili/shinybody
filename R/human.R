@@ -151,24 +151,22 @@ organ_to_id <- list(
 
 #' Interactive Human Body Widget
 #'
-#' This widget visualizes an SVG-based human body, highlights specific body parts,
-#' and displays associated participant data.
+#' This widget visualizes an SVG-based human body, highlights specific body
+#' parts, and displays associated participant data.
 #'
 #' @param gender One of "male" or "female"
 #' @param organ_df A data.frame with at least an `organ` column, and optionally
 #' the following columns:
-#' \describe{
-#' \item{show }{A logical (Boolean) column indicating whether or not each organ
-#' should be visible. If absent, all organs will be shown.}
-#' \item{selected }{A logical (Boolean) column indicating whether or not each
-#' organ should be in a "selected" state. If absent, no organs will be selected.}
-#' \item{hovertext }{A character column or a column containing `shiny.tag`
+#' * `show`: A logical (Boolean) column indicating whether or not each organ
+#' should be visible. If absent, all organs will be shown.
+#' * `selected`: A logical (Boolean) column indicating whether or not each
+#' organ should be in a "selected" state. If absent, no organs will be selected.
+#' * `hovertext`: A character column or a column containing `shiny.tag`
 #' objects. This will be the contents of the tooltip that appears when the organ
 #' is hovered over. If absent, the tooltip will contain the title-cased name of
-#' the organ (underscores replaced with spaces).}
-#' \item{color }{A character column indicating the color of the organ. If absent,
-#' all organs will be shown in black.}
-#' }
+#' the organ (underscores replaced with spaces).
+#' * `color`: A character column indicating the color of the organ. If absent,
+#' all organs will be shown in black.
 #' If `organ_df` has other columns, these will be ignored.
 #' @param select_color The color that should be applied to organs with the
 #' "selected" state (activated by clicking the organ and deactivated by clicking
@@ -176,6 +174,8 @@ organ_to_id <- list(
 #' @param width Widget width
 #' @param height Widget height
 #' @param elementId ID of the widget
+#'
+#' @returns An object of class `human` and class `htmlwidget`.
 #'
 #' @import htmlwidgets
 #'
@@ -188,7 +188,10 @@ organ_to_id <- list(
 #' my_organ_df$color <- grDevices::rainbow(nrow(my_organ_df))
 #' my_organ_df$selected[1] <- TRUE
 #' my_organ_df$hovertext <- mapply(
-#'   function(o, clr) htmltools::strong(tools::toTitleCase(o), style = paste("color:", clr)),
+#'   function(o, clr) htmltools::strong(
+#'     tools::toTitleCase(o),
+#'     style = paste("color:", clr)
+#'   ),
 #'   my_organ_df$organ,
 #'   my_organ_df$color,
 #'   SIMPLIFY = FALSE
@@ -316,9 +319,72 @@ human <- function(
 #' @param quoted Is \code{expr} a quoted expression (with \code{quote()})? This
 #'   is useful if you want to save an expression in a variable.
 #'
+#' @returns A `shiny.tag.list` object (in the case of `humanOutput`) or a
+#' `shiny.render.function` object (in the case of `renderHuman`).
+#'
 #' @name human-shiny
 #'
 #' @export
+#'
+#' @examples
+#' if (interactive()) {
+#'   library(shiny)
+#'
+#'   ui <- function() {
+#'     fluidPage(
+#'       selectInput(
+#'         inputId = "gender",
+#'         label = "Select Gender",
+#'         choices = c("male", "female"),
+#'         multiple = FALSE,
+#'         selected = "male"
+#'       ),
+#'       selectInput(
+#'         inputId = "body_parts",
+#'         label = "Select Body Parts to Show",
+#'         choices = names(shinybody:::organ_to_id[["male"]]),
+#'         multiple = TRUE,
+#'         selected = names(shinybody:::organ_to_id[["male"]])[1:5]
+#'       ),
+#'       humanOutput(outputId = "human_widget"),
+#'       verbatimTextOutput(outputId = "clicked_body_part_msg"),
+#'       verbatimTextOutput(outputId = "selected_body_parts_msg")
+#'     )
+#'   }
+#'
+#'   server <- function(input, output, session) {
+#'     observe({
+#'       g <- input$gender
+#'
+#'       updateSelectInput(
+#'         session = session,
+#'         inputId = "body_parts",
+#'         choices = names(shinybody:::organ_to_id[[g]]),
+#'         selected = names(shinybody:::organ_to_id[[g]])[1:5]
+#'       )
+#'     })
+#'
+#'     output$human_widget <- renderHuman({
+#'       selected_organ_df <- subset(
+#'         shinybody::shinybody_organs,
+#'         organ %in% input$body_parts
+#'       )
+#'       selected_organ_df$show <- TRUE
+#'       human(
+#'         organ_df = selected_organ_df,
+#'         select_color = "red"
+#'       )
+#'     })
+#'     output$clicked_body_part_msg <- renderPrint({
+#'       paste("You Clicked:", input$clicked_body_part)
+#'     })
+#'     output$selected_body_parts_msg <- renderPrint({
+#'       paste("Selected:", paste(input$selected_body_parts, collapse = ", "))
+#'     })
+#'   }
+#'
+#'   shinyApp(ui = ui, server = server)
+#' }
 humanOutput <- function(outputId, width = '100%', height = '400px') {
   htmlwidgets::shinyWidgetOutput(outputId, 'human', width, height, package = 'shinybody')
 }

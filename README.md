@@ -22,6 +22,12 @@ You can install the development version of `shinybody` from
 devtools::install_github("robert-norberg/shinybody")
 ```
 
+You can install from CRAN with:
+
+``` r
+install.packages("shinybody")
+```
+
 ## Example
 
 Here is a simple example of using the `human` widget in an R Markdown
@@ -173,6 +179,7 @@ server <- function(input, output, session) {
     selected_organ_df <- subset(shinybody::shinybody_organs, organ %in% input$body_parts)
     selected_organ_df$show <- TRUE
     human(
+      gender = input$gender,
       organ_df = selected_organ_df,
       select_color = "red"
     )

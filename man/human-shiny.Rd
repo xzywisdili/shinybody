@@ -24,7 +24,71 @@ string and have \code{'px'} appended.}
 \item{quoted}{Is \code{expr} a quoted expression (with \code{quote()})? This
 is useful if you want to save an expression in a variable.}
 }
+\value{
+A \code{shiny.tag.list} object (in the case of \code{humanOutput}) or a
+\code{shiny.render.function} object (in the case of \code{renderHuman}).
+}
 \description{
 Output and render functions for using human within Shiny
 applications and interactive Rmd documents.
+}
+\examples{
+if (interactive()) {
+  library(shiny)
+
+  ui <- function() {
+    fluidPage(
+      selectInput(
+        inputId = "gender",
+        label = "Select Gender",
+        choices = c("male", "female"),
+        multiple = FALSE,
+        selected = "male"
+      ),
+      selectInput(
+        inputId = "body_parts",
+        label = "Select Body Parts to Show",
+        choices = names(shinybody:::organ_to_id[["male"]]),
+        multiple = TRUE,
+        selected = names(shinybody:::organ_to_id[["male"]])[1:5]
+      ),
+      humanOutput(outputId = "human_widget"),
+      verbatimTextOutput(outputId = "clicked_body_part_msg"),
+      verbatimTextOutput(outputId = "selected_body_parts_msg")
+    )
+  }
+
+  server <- function(input, output, session) {
+    observe({
+      g <- input$gender
+
+      updateSelectInput(
+        session = session,
+        inputId = "body_parts",
+        choices = names(shinybody:::organ_to_id[[g]]),
+        selected = names(shinybody:::organ_to_id[[g]])[1:5]
+      )
+    })
+
+    output$human_widget <- renderHuman({
+      selected_organ_df <- subset(
+        shinybody::shinybody_organs,
+        organ \%in\% input$body_parts
+      )
+      selected_organ_df$show <- TRUE
+      human(
+        organ_df = selected_organ_df,
+        select_color = "red"
+      )
+    })
+    output$clicked_body_part_msg <- renderPrint({
+      paste("You Clicked:", input$clicked_body_part)
+    })
+    output$selected_body_parts_msg <- renderPrint({
+      paste("Selected:", paste(input$selected_body_parts, collapse = ", "))
+    })
+  }
+
+  shinyApp(ui = ui, server = server)
+}
 }

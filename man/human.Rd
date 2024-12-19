@@ -18,19 +18,19 @@ human(
 
 \item{organ_df}{A data.frame with at least an \code{organ} column, and optionally
 the following columns:
-\describe{
-\item{show }{A logical (Boolean) column indicating whether or not each organ
-should be visible. If absent, all organs will be shown.}
-\item{selected }{A logical (Boolean) column indicating whether or not each
-organ should be in a "selected" state. If absent, no organs will be selected.}
-\item{hovertext }{A character column or a column containing \code{shiny.tag}
+\itemize{
+\item \code{show}: A logical (Boolean) column indicating whether or not each organ
+should be visible. If absent, all organs will be shown.
+\item \code{selected}: A logical (Boolean) column indicating whether or not each
+organ should be in a "selected" state. If absent, no organs will be selected.
+\item \code{hovertext}: A character column or a column containing \code{shiny.tag}
 objects. This will be the contents of the tooltip that appears when the organ
 is hovered over. If absent, the tooltip will contain the title-cased name of
-the organ (underscores replaced with spaces).}
-\item{color }{A character column indicating the color of the organ. If absent,
-all organs will be shown in black.}
-}
-If \code{organ_df} has other columns, these will be ignored.}
+the organ (underscores replaced with spaces).
+\item \code{color}: A character column indicating the color of the organ. If absent,
+all organs will be shown in black.
+If \code{organ_df} has other columns, these will be ignored.
+}}
 
 \item{select_color}{The color that should be applied to organs with the
 "selected" state (activated by clicking the organ and deactivated by clicking
@@ -42,9 +42,12 @@ again).}
 
 \item{elementId}{ID of the widget}
 }
+\value{
+An object of class \code{human} and class \code{htmlwidget}.
+}
 \description{
-This widget visualizes an SVG-based human body, highlights specific body parts,
-and displays associated participant data.
+This widget visualizes an SVG-based human body, highlights specific body
+parts, and displays associated participant data.
 }
 \examples{
 example_organs <- c("brain", "eye", "heart", "stomach", "bladder")
@@ -53,7 +56,10 @@ my_organ_df$show <- TRUE
 my_organ_df$color <- grDevices::rainbow(nrow(my_organ_df))
 my_organ_df$selected[1] <- TRUE
 my_organ_df$hovertext <- mapply(
-  function(o, clr) htmltools::strong(tools::toTitleCase(o), style = paste("color:", clr)),
+  function(o, clr) htmltools::strong(
+    tools::toTitleCase(o),
+    style = paste("color:", clr)
+  ),
   my_organ_df$organ,
   my_organ_df$color,
   SIMPLIFY = FALSE
