@@ -206,7 +206,16 @@ human <- function(
     elementId = NULL) {
   gender <- match.arg(gender, choices = c("male", "female"), several.ok = FALSE)
   organ_to_id_map <- organ_to_id[[gender]]
-  stopifnot(is.data.frame(organ_df))
+  if (crosstalk::is.SharedData(organ_df)) {
+    key <- organ_df$key()
+    group <- organ_df$groupName()
+    organ_df <- organ_df$origData()
+  } else if (is.data.frame(organ_df)) {
+    key <- NULL
+    group <- NULL
+  } else {
+    stop("organ_df must be a data.frame or a crosstalk sharedData object")
+  }
   stopifnot("organ" %in% names(organ_df))
   if (anyDuplicated(organ_df$organ)) {
     duplicated_organs <- organ_df$organ[duplicated(organ_df$organ)]
@@ -270,15 +279,7 @@ human <- function(
     organ_df$color <- "#000000" # black
   }
 
-  organs <- list()
-  for (i in seq_len(nrow(organ_df))) {
-    organlist <- as.list(
-      organ_df[i, c("organ", "show", "selected", "hovertext", "color")]
-    )
-    organlist$name <- organlist$organ
-    oid <- organ_to_id_map[[organlist$organ]]
-    organs[[oid]] <- organlist
-  }
+  organ_df$organ_id <- sapply(organ_df$organ, function(o) organ_to_id_map[[o]])
 
   if (gender == "male") {
     svg_file <- system.file("svgs", "homo_sapiens_male.svg", package = "shinybody")
@@ -288,8 +289,12 @@ human <- function(
   svg_text <- paste(readLines(svg_file), collapse = "\n")
 
   x = list(
-    organs = organs,
+    organs = organ_df,
     select_color = select_color,
+    settings = list(
+      crosstalk_key = key,
+      crosstalk_group = group
+    ),
     svg_text = svg_text
   )
 
@@ -300,6 +305,7 @@ human <- function(
       width = width,
       height = height,
       package = 'shinybody',
+      dependencies = crosstalk::crosstalkLibs(),
       elementId = elementId
     )
   )
