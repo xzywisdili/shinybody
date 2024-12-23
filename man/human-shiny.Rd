@@ -36,6 +36,9 @@ applications and interactive Rmd documents.
 if (interactive()) {
   library(shiny)
 
+  male_organs <- shinybody::shinybody_organs$organ[shinybody::shinybody_organs$male]
+  female_organs <- shinybody::shinybody_organs$organ[shinybody::shinybody_organs$female]
+
   ui <- function() {
     fluidPage(
       selectInput(
@@ -48,9 +51,9 @@ if (interactive()) {
       selectInput(
         inputId = "body_parts",
         label = "Select Body Parts to Show",
-        choices = names(shinybody:::organ_to_id[["male"]]),
+        choices = male_organs,
         multiple = TRUE,
-        selected = names(shinybody:::organ_to_id[["male"]])[1:5]
+        selected = male_organs[1:5]
       ),
       humanOutput(outputId = "human_widget"),
       verbatimTextOutput(outputId = "clicked_body_part_msg"),
@@ -61,12 +64,17 @@ if (interactive()) {
   server <- function(input, output, session) {
     observe({
       g <- input$gender
+      if (g == "male") {
+        organ_choices <- male_organs
+      } else {
+        organ_choices <- female_organs
+      }
 
       updateSelectInput(
         session = session,
         inputId = "body_parts",
-        choices = names(shinybody:::organ_to_id[[g]]),
-        selected = names(shinybody:::organ_to_id[[g]])[1:5]
+        choices = organ_choices,
+        selected = organ_choices[1:5]
       )
     })
 
