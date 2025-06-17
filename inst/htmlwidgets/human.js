@@ -3,7 +3,7 @@ HTMLWidgets.widget({
 
   type: "output",
 
-  factory: function (el) {
+  factory: function (el, width, height) {
     el.style.border = "1px solid #ddd";
     el.style.display = "inline-block";
     el.style.margin = "2px";
@@ -12,8 +12,9 @@ HTMLWidgets.widget({
     el.style.borderRadius = "8px";
     el.style.overflow = "hidden";
     el.style.boxShadow = "0px 4px 6px rgba(0, 0, 0, 0.1)";
-    el.style.width = 'max-content';
-    el.style.height = 'auto';
+    
+	if (width) el.style.width = width + 'px';
+    if (height) el.style.height = height + 'px';
 
     let selectedOrgans = [];
 
