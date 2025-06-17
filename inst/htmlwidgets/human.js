@@ -95,10 +95,7 @@ HTMLWidgets.widget({
 			  selectedOrgans = [organObject.organ];
             
               if (window.Shiny) {
-				Shiny.setInputValue("clicked_body_part", {
-					organ:organObject.organ,
-				    nonce: Math.random()
-				}, {priority: "event"});
+				Shiny.setInputValue("clicked_body_part", organObject.organ, {priority: "event"});
 				//Shiny.setInputValue("selected_body_parts", selectedOrgans);
 			  }
             });
