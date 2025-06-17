@@ -86,36 +86,18 @@ HTMLWidgets.widget({
             });
 
             shownPart.addEventListener("click", function () {
-              if (shownPart.getAttribute("data-selected") === "true") {
-                // console.log(`Click: selected ${organObject.organ}`)
-                shownPart.setAttribute("data-selected", "false");
-                shownPart.style.fill = shownPart.dataset.color;
-                shownPart.style.stroke = shownPart.dataset.color;
-                shownPart.style.strokeWidth = "0.3px";
-                shownPart.style.opacity = 0.6;
-
-                selectedOrgans = selectedOrgans.filter(
-                  (item) => item !== organObject.organ
-                );
-              } else {
-                // console.log(`Click: de-selected ${organObject.organ}`)
-                shownPart.setAttribute("data-selected", "true");
-                shownPart.style.fill = x.select_color;
-                shownPart.style.stroke = "black";
-                shownPart.style.strokeWidth = "1px";
-                shownPart.style.opacity = 1;
-                selectedOrgans.push(organObject.organ);
-              }
-              const selectedOrgansIds = selectedOrgans.map(
-                organ_nm => el.querySelector(`.organ[data-organ-name=${organ_nm}`).id
-              );
-              sel_handle.set(selectedOrgansIds);
-              // console.log(`Selected keys: ${selectedOrgansIds}`)
-
+			  // console.log(`Click: de-selected ${organObject.organ}`)
+			  shownPart.setAttribute("data-selected", "true");
+			  shownPart.style.fill = x.select_color;
+			  shownPart.style.stroke = "black";
+			  shownPart.style.strokeWidth = "1px";
+			  shownPart.style.opacity = 1;
+			  selectedOrgans = [organObject.organ];
+            
               if (window.Shiny) {
-                Shiny.setInputValue("clicked_body_part", organObject.organ);
-                Shiny.setInputValue("selected_body_parts", selectedOrgans);
-              }
+				Shiny.setInputValue("clicked_body_part", organObject.organ, {priority: "event"});
+				Shiny.setInputValue("selected_body_parts", selectedOrgans);
+			  }
             });
           }
         });
