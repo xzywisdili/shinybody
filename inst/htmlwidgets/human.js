@@ -88,14 +88,14 @@ HTMLWidgets.widget({
             shownPart.addEventListener("click", function () {
 			  // console.log(`Click: de-selected ${organObject.organ}`)
 			  shownPart.setAttribute("data-selected", "true");
-			  shownPart.style.fill = x.select_color;
-			  shownPart.style.stroke = "black";
-			  shownPart.style.strokeWidth = "1px";
-			  shownPart.style.opacity = 1;
-			  selectedOrgans = [organObject.organ];
+			  //shownPart.style.fill = x.select_color;
+			  //shownPart.style.stroke = "black";
+			  //shownPart.style.strokeWidth = "1px";
+			  //shownPart.style.opacity = 1;
+			  //selectedOrgans = [organObject.organ];
             
               if (window.Shiny) {
-				Shiny.setInputValue("clicked_body_part", organObject.organ, {priority: "event"});
+				//Shiny.setInputValue("clicked_body_part", organObject.organ, {priority: "event"});
 				Shiny.setInputValue("selected_body_parts", selectedOrgans);
 			  }
             });
