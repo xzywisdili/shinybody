@@ -272,10 +272,10 @@ HTMLWidgets.widget({
               });
             }
             if (selectionChanged) {
-              const selectedOrgansIds = selectedOrgans.map(
-                organ_nm => el.querySelector(`.organ[data-organ-name=${organ_nm}`).id
-              );
-              sel_handle.set(selectedOrgansIds);
+              //const selectedOrgansIds = selectedOrgans.map(
+              //  organ_nm => el.querySelector(`.organ[data-organ-name=${organ_nm}`).id
+              //);
+              //sel_handle.set(selectedOrgansIds);
               if (window.Shiny) {
                 Shiny.setInputValue("selected_body_parts", selectedOrgans);
               }
